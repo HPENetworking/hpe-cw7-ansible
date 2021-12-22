@@ -1,1 +1,1 @@
-"# hpe-cw7-ansible" 
+# hpe-cw7-ansible

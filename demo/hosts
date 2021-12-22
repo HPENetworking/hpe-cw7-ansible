@@ -1,6 +1,6 @@
 [all:vars]
-username=h3c
-password=admin12345
-
+username=hpe
+password=hpe
+ansible_python_interpreter=/usr/bin/python3
 [switches]
-S6850-56HF
+hpe1
