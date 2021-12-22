@@ -1,0 +1,18 @@
+---
+
+  - name: HP Comware clean_erase testing
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    # USE THIS AS GUIDANCE ONLY
+    # YOUR DEVICES WILL BE REBOOTED AT SOME POINT BY RUNNING THIS PLAYBOOK
+    tasks:
+
+      - name: factory default and reboot immediately
+        comware_clean_erase: factory_default=true username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+

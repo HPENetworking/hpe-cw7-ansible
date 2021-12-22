@@ -1,0 +1,74 @@
+---
+
+  - name: HP Comware OS Installation automation
+    hosts: hp2
+    gather_facts: no
+    connection: local
+
+    tasks:
+      - name: Basic Install OS IPE
+        comware_install_os: ipe_package=../5900_5920_5930-CMW710-E2415.ipe reboot=false username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: Basic Install OS IPE idempotency
+        comware_install_os: ipe_package=../5900_5920_5930-CMW710-E2415.ipe reboot=false username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - assert:
+          that:
+            - "results.transfered == false"
+
+      - name: Basic Install OS Boot/Sys
+        comware_install_os: reboot=false boot=../5930-cmw710-boot-e2415.bin system=../5930-cmw710-system-e2415.bin username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: Basic Install OS Boot/Sys idempotency
+        comware_install_os: reboot=false boot=../5930-cmw710-boot-e2415.bin system=../5930-cmw710-system-e2415.bin username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - assert:
+          that:
+            - "results.transfered == false"
+
+      # failures
+      - name: boot/sys and ipe used together
+        comware_install_os: reboot=no ipe_package=../5900_5920_5930-CMW710-E2415.ipe system=../5930-cmw710-system-e2415.bin username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+        ignore_errors: true
+        tags: fail
+
+      - assert:
+          that:
+          - "results.failed == true"
+        tags: fail
+
+      - name: just system without boot
+        comware_install_os: reboot=no system=../5930-cmw710-system-e2415.bin username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+        ignore_errors: true
+        tags: fail
+
+      - assert:
+          that:
+          - "results.failed == true"
+        tags: fail
+
+      - name: file doesn't exist locally
+        comware_install_os: reboot=no ipe_package=../notfile username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+        ignore_errors: true
+        tags: fail
+
+      - assert:
+          that:
+          - "results.failed == true"
+        tags: fail
+
+      # reboot attempt
+      - name: Reboot attempt
+        comware_install_os: reboot=yes boot=../5930-cmw710-boot-e2415.bin system=../5930-cmw710-system-e2415.bin username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+        tags: reboot
+
+      - assert:
+          that:
+            - "results.reboot_attempt == 'yes'"
+        tags: reboot

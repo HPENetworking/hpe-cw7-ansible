@@ -1,0 +1,127 @@
+---
+
+  - name: HP Comware vxlan automation testing
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      - name: ensure L2VPN is enabled
+        comware_l2vpn_global: state=enabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        ignore_errors: true
+        register: data
+        tags: l2vpn
+
+
+      #  DEPLOY VXLAN TUNNEL INTERFACES
+      #################################
+
+
+      - name: ensure L2VPN is enabled to run failure test
+        comware_l2vpn_global: state=enabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        tags: l2vpn
+
+      - comware_vxlan_tunnel: tunnel=20 global_src=10.10.10.10 src=10.1.1.1 dest=10.1.1.2 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        tags: tunnel
+
+      - assert:
+          that:
+            - data.end_state.global_src == '10.10.10.10'
+            - data.end_state.src == '10.1.1.1'
+            - data.end_state.dest == '10.1.1.2'
+
+      - comware_vxlan_tunnel: tunnel=21 src=10.1.1.1 dest=10.1.1.2 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        tags: tunnel
+
+      - assert:
+          that:
+            - data.end_state.global_src == '10.10.10.10'
+            - data.end_state.src == '10.1.1.1'
+            - data.end_state.dest == '10.1.1.2'
+
+      - comware_vxlan_tunnel: tunnel=22 src=10.1.1.1 dest=10.1.1.2 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        tags: tunnel
+
+      - assert:
+          that:
+            - data.end_state.global_src == '10.10.10.10'
+            - data.end_state.src == '10.1.1.1'
+            - data.end_state.dest == '10.1.1.2'
+
+      - comware_vxlan_tunnel: tunnel=23 src=10.1.1.1 dest=10.1.1.2 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        tags: tunnel
+
+      - assert:
+          that:
+            - data.end_state.global_src == '10.10.10.10'
+            - data.end_state.src == '10.1.1.1'
+            - data.end_state.dest == '10.1.1.2'
+
+      - comware_vxlan_tunnel: tunnel=24 src=10.1.1.1 dest=10.1.1.2 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        tags: tunnel
+
+      - assert:
+          that:
+            - data.end_state.global_src == '10.10.10.10'
+            - data.end_state.src == '10.1.1.1'
+            - data.end_state.dest == '10.1.1.2'
+
+      ##### FAILURE TESTS
+
+
+      ##### VERIFY FAIL OCCURS WHEN L2VPN IS NOT ENABLED
+
+      - name: ensure L2VPN is disabled to run failure test
+        comware_l2vpn_global: state=disabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        ignore_errors: true
+        register: data
+        tags: f1
+
+      - comware_vxlan_tunnel: tunnel=20 global_src=10.10.10.10 src=10.1.1.1 dest=10.1.1.2 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        ignore_errors: true
+        register: data
+        tags: f1
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f1
+
+      - name: ensure L2VPN is enabled
+        comware_l2vpn_global: state=enabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        ignore_errors: true
+        register: data
+        tags: f1
+
+      ##### VERIFY FAIL OCCURS WHEN ANOTHER TUNNEL TYPE EXISTS FOR THE SAME TUNNEL BEING CONFIGURED
+
+      - name: configure a non vxlan tunnel interface
+        comware_command: type=config command='interface tunnel50 mode gre'  username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        tags: f2
+
+      - name: ensure fail when tunnel is already a non-vxlan tunnel
+        comware_vxlan_tunnel: tunnel=50 src=10.1.1.1 dest=10.1.1.2 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: f2
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f2
+
+      - name: remove tunnel 50
+        comware_vxlan_tunnel: tunnel=50 state=absent username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        tags: f2

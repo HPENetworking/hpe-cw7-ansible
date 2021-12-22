@@ -1,0 +1,17 @@
+---
+
+  - name: VLAN Automation with Ansible on HP Com7 Devices
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    tasks:
+
+      - name: ensure VLAN 10 exists
+        comware_vlan: vlanid=10 name=VLAN10_WEB descr=LOCALSEGMENT username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: ensure VLAN 20 exists
+        comware_vlan: vlanid=20 name=VLAN20 state=present username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: ensure VLAN 10 does not exist
+        comware_vlan: vlanid=10 state=absent username={{ username }} password={{ password }} hostname={{ inventory_hostname }}

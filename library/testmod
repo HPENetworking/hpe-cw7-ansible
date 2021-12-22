@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+def main():
+    module = AnsibleModule(
+        argument_spec=dict(),
+        supports_check_mode=True
+    )
+
+    try:
+        #module.fail_json(msg='exiting')
+        pass
+
+    finally:
+        sdfasdfd()
+from ansible.module_utils.basic import *
+main()

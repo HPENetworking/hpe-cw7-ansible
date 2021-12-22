@@ -1,0 +1,21 @@
+---
+
+  - name: HP Comware IRF Membership Testing
+    hosts: hp3
+    gather_facts: no
+    connection: local
+
+    tasks:
+
+      - name: irf members
+        comware_irf_members:
+          member_id: 1
+          state: present
+          auto_update: disable
+          domain_id: 1
+          priority: 4
+          descr: My description
+          reboot: no
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"

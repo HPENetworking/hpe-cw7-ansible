@@ -1,0 +1,42 @@
+---
+
+  - name: HP Comware save
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      - name: save as myfile.cfg (in flash)
+        comware_save: filename=myfile.cfg username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: save as startup.cfg (in flash)
+        comware_save: username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      ### FAIL CASES
+
+      - name: only file names (not paths) will work that end in cfg
+        comware_save: filename=mydir/myfile.cfg username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: fail
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: fail
+
+      - name: only file names will work that end in cfg
+        comware_save: filename=myfile username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: fail
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: fail

@@ -1,0 +1,47 @@
+---
+
+  - name: HP Comware vrrp global mode testing
+    hosts: hp2
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+
+      - name: vrrp global config mode - standard
+        comware_vrrp_global: mode=standard username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state == 'standard'
+
+
+      - name: idempotency
+        comware_vrrp_global: mode=standard username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.changed == false
+
+      - name: vrrp global config mode - LB
+        comware_vrrp_global: mode=load-balance username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state == 'load-balance'
+
+      - name: revert back
+        comware_vrrp_global: mode=standard username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state == 'standard'
+            - data.changed == true

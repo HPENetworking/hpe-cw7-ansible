@@ -1,0 +1,32 @@
+---
+
+  - name: HP Comware facts
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    tasks:
+
+      - name: test reachability to 8.8.8.8
+        comware_ping: host=8.8.8.8 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: dump all of results
+        debug: var=results
+
+      - name: print to terminal some of the return data individually
+        debug: msg="loss rate         --> {{ results.response.loss_rate }}"
+      - debug: msg="avg response time --> {{ results.response.avg }}ms"
+      - debug: msg="packets sent      --> {{ results.response.packets_rx }}"
+      - debug: msg="packets received  --> {{ results.response.packets_tx }}"
+
+      # FAIL TEST
+      - name: test reachability t
+        comware_ping: host=300.8.8.8 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        ignore_errors: true
+        register: data
+        tags: f1
+
+      - assert:
+          that:
+            - data.failed == true

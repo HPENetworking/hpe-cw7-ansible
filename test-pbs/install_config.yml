@@ -1,0 +1,48 @@
+---
+
+  - name: HP Comware install_config testing
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+
+    tasks:
+
+      - name: install config file that will be the new running config
+        comware_install_config:
+          config_file='/home/ansible/projects/pyhpecw7comware/diffcheck.cfg'
+          diff_file='/home/ansible/projects/pyhpecw7comware/diff1.diff'
+          commit_changes=true
+          username={{ username }}
+          password={{ password }}
+          hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.config_file == '/home/ansible/projects/pyhpecw7comware/diffcheck.cfg'
+            - data.diff_file == '/home/ansible/projects/pyhpecw7comware/diff1.diff'
+            - data.commit_changes == true
+            - data.changed == true
+            - data.active_files.config_applied == 'flash:/diffcheck.cfg'
+
+      - name: install config file that will be the new running config
+        comware_install_config:
+          config_file='/home/ansible/projects/pyhpecw7comware/diffcheck.cfg'
+          commit_changes=false
+          username={{ username }}
+          password={{ password }}
+          hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.config_file == '/home/ansible/projects/pyhpecw7comware/diffcheck.cfg'
+            - data.diff_file == none
+            - data.commit_changes == false
+            - data.changed == false
+            - data.active_files.config_applied == 'flash:/diffcheck.cfg'

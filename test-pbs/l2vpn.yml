@@ -1,0 +1,45 @@
+---
+
+  - name: HP Comware vxlan automation testing
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      - name: ensure L2VPN is enabled
+        comware_l2vpn_global: state=enabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state == 'enabled'
+
+
+      - name: ensure L2VPN is enabled
+        comware_l2vpn_global: state=enabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.changed == false
+
+      - name: ensure L2VPN is disabled
+        comware_l2vpn_global: state=disabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state == 'disabled'
+
+      - name: ensure L2VPN is enabled
+        comware_l2vpn_global: state=enabled username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state == 'enabled'

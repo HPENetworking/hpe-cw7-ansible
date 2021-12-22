@@ -1,0 +1,19 @@
+---
+
+  - name: HP Comware facts
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      - name: get facts
+        comware_facts: username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: print to terminal the operating system of the switch
+        debug: var=os
+

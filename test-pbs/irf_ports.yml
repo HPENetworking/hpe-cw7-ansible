@@ -1,0 +1,41 @@
+---
+
+  - name: HP Comware IRF Ports testing
+    hosts: hp2
+    gather_facts: no
+    connection: local
+
+    vars:
+      mylist:
+        - FortyGigE1/0/1
+        - FortyGigE1/0/4
+
+    tasks:
+      - name: irf ports
+        comware_irf_ports: member_id=1 irf_p1=FortyGigE1/0/1 irf_p2=FortyGigE1/0/2 removal_override=yes username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: irf ports
+        comware_irf_ports:
+          member_id: 1
+          irf_p1: "{{ mylist }}"
+          irf_p2: FortyGigE1/0/2
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          removal_override: yes
+          activate: false
+        tags: '1'
+
+      - name: irf ports
+        comware_irf_ports:
+          member_id: 2
+          irf_p1: FortyGigE2/0/2
+          irf_p2: 
+            - FortyGigE2/0/1
+            - Fo2/0/7
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          removal_override: yes
+          activate: false
+        tags: '2'

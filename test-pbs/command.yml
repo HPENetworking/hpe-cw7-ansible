@@ -1,0 +1,35 @@
+---
+
+  - name: HP Comware command
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      - name: display vlan 10 passing in a string
+        comware_command: command='display vlan 5' type=display username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: display vlans passing in a list
+        comware_command:
+          command:
+            - display vlan 10
+            - display vlan 5
+          type: display
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+
+      - name: passing in config commands as a list
+        comware_command:
+          command:
+            - vlan 5
+            - name web_vlan
+          type: config
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"

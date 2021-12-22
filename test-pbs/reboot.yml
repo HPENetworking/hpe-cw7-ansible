@@ -1,0 +1,73 @@
+---
+
+  - name: HP Comware reboot testing
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    # USE THIS AS GUIDANCE ONLY
+    # YOUR DEVICES WILL BE REBOOTED AT SOME POINT BY RUNNING THIS PLAYBOOK
+    tasks:
+
+      - name: fail when reboot param isnt included
+        comware_reboot: username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        ignore_errors: true
+        register: data
+
+      - name: validate fail TEST 1
+        assert:
+          that:
+            - data.failed == true
+
+      - name: reboot at 5:00
+        comware_reboot: reboot=true time="05:00" username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: reboot in 5 minutes
+        comware_reboot: reboot=true delay=5 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: reboot at 22:00 on July 30 2015
+        comware_reboot: reboot=true time="22:00" date="07/10/2015" username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      # uncomment to reboot!!!
+      # - name: reboot immedidately
+      #  comware_reboot: reboot=true username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+      #  tags: now
+
+
+      ### FAIL CONDITIONS
+
+      # PROPER FORMAT FOR TIME
+      - name: proper format is HH:MM
+        comware_reboot: reboot=true time="5:00" username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: f1
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f1
+
+      # PROPER FORMAT FOR DATE
+      - name: test invalid data entry
+        comware_reboot: reboot=true time="22:00" date="1/2015" username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: f2
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f2
+
+      # ENSURE TIME IS REQUIRED WHEN DATE IS USED
+      - name: ensure time is required when date is set
+        comware_reboot: reboot=true date="7/1/2015" username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: f3
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f3

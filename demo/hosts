@@ -1,0 +1,6 @@
+[all:vars]
+username=h3c
+password=admin12345
+
+[switches]
+S6850-56HF

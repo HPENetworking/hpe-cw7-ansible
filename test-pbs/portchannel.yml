@@ -1,0 +1,372 @@
+---
+
+  - name: HP Comware portchannel automation
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      - name: ensure ragg 100 does not exist
+        comware_portchannel:
+          group: 100
+          type: routed
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: absent
+        register: data
+
+      - name: test for ragg100
+        assert:
+          that:
+            - data.end_state == {}
+
+      # prep
+      - comware_interface: name={{ item }} type=routed username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        with_items:
+          - FortyGigE1/0/27
+          - FortyGigE1/0/28
+          - FortyGigE1/0/29
+          - FortyGigE1/0/30
+
+      - name: config 1
+        comware_portchannel:
+          group: 100
+          members:
+            - FortyGigE1/0/27
+            - FortyGigE1/0/28
+            - FortyGigE1/0/29
+            - FortyGigE1/0/30
+          type: routed
+          mode: static
+          min_ports: 2
+          max_ports: 4
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+
+      - name: test 1
+        assert:
+          that:
+            - data.end_state.members == ["FortyGigE1/0/27", "FortyGigE1/0/28", "FortyGigE1/0/29", "FortyGigE1/0/30"]
+            - data.end_state.min_ports == '2'
+            - data.end_state.max_ports == '4'
+            - data.end_state.mode == 'static'
+
+      - name: config 2
+        comware_portchannel:
+          group: 100
+          members:
+            - FortyGigE1/0/27
+            - FortyGigE1/0/28
+          type: routed
+          mode: dynamic
+          lacp_mode: active
+          lacp_edge: enabled
+          min_ports: 2
+          max_ports: 4
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+
+      - name: test 2
+        assert:
+          that:
+            - data.end_state.members == ["FortyGigE1/0/27", "FortyGigE1/0/28"]
+            - data.end_state.min_ports == '2'
+            - data.end_state.max_ports == '4'
+            - data.end_state.lacp_edge == 'enabled'
+            - data.end_state.mode == 'dynamic'
+
+      - name: config 3 - idempotent check
+        comware_portchannel:
+          group: 100
+          members:
+            - FortyGigE1/0/27
+            - FortyGigE1/0/28
+          type: routed
+          mode: dynamic
+          lacp_mode: active
+          lacp_edge: enabled
+          min_ports: 2
+          max_ports: 4
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+
+      - name: test 3
+        assert:
+          that:
+            - data.changed == false
+
+      - name: config 4 - removal
+        comware_portchannel:
+          group: 100
+          type: routed
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: absent
+        register: data
+
+      - name: test 4
+        assert:
+          that:
+            - data.changed == true
+            - data.end_state == {}
+
+      - name: ensure bagg 10 does not exist
+        comware_portchannel:
+          group: 10
+          type: bridged
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: absent
+        register: data
+
+      - name: test for bagg10
+        assert:
+          that:
+            - data.end_state == {}
+
+      - comware_interface: name={{ item }} type=bridged username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        with_items:
+          - FortyGigE1/0/1
+          - FortyGigE1/0/2
+          - FortyGigE1/0/3
+          - FortyGigE1/0/4
+
+      - name: config 5 - config bagg
+        comware_portchannel:
+          group: 10
+          members:
+            - FortyGigE1/0/1
+            - FortyGigE1/0/2
+          type: bridged
+          mode: dynamic
+          lacp_mode: active
+          lacp_edge: enabled
+          min_ports: 2
+          max_ports: 8
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+
+      - name: test 5
+        assert:
+          that:
+            - data.end_state.members == ["FortyGigE1/0/1", "FortyGigE1/0/2"]
+            - data.end_state.min_ports == '2'
+            - data.end_state.max_ports == '8'
+            - data.end_state.lacp_edge == 'enabled'
+            - data.end_state.mode == 'dynamic'
+
+      - name: config 6 - idempotent check
+        comware_portchannel:
+          group: 10
+          members:
+            - FortyGigE1/0/1
+            - FortyGigE1/0/2
+          type: bridged
+          mode: dynamic
+          lacp_mode: active
+          lacp_edge: enabled
+          min_ports: 2
+          max_ports: 8
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+
+      - name: test 6
+        assert:
+          that:
+            - data.changed == false
+
+      - name: config 7
+        comware_portchannel:
+          group: 10
+          members:
+            - FortyGigE1/0/1
+            - FortyGigE1/0/2
+            - FortyGigE1/0/3
+            - FortyGigE1/0/4
+          type: bridged
+          mode: static
+          min_ports: 2
+          max_ports: 6
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+
+      - name: test 7
+        assert:
+          that:
+            - data.end_state.members == ["FortyGigE1/0/1", "FortyGigE1/0/2", "FortyGigE1/0/3", "FortyGigE1/0/4"]
+            - data.end_state.min_ports == '2'
+            - data.end_state.max_ports == '6'
+            - data.end_state.mode == 'static'
+
+
+      - name: config 8 - idempotent check
+        comware_portchannel:
+          group: 10
+          members:
+            - FortyGigE1/0/1
+            - FortyGigE1/0/2
+            - FortyGigE1/0/3
+            - FortyGigE1/0/4
+          type: bridged
+          mode: static
+          lacp_mode: active
+          min_ports: 2
+          max_ports: 6
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+
+      - name: config 8
+        assert:
+          that:
+            - data.changed == false
+
+      - name: config 9 - removal
+        comware_portchannel:
+          group: 10
+          type: bridged
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: absent
+        register: data
+
+      - name: test 9
+        assert:
+          that:
+            - data.changed == true
+            - data.end_state == {}
+
+      #### FAIL CONDITIONS
+
+      - comware_interface: name={{ item }} type=bridged username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        with_items:
+          - FortyGigE1/0/1
+          - FortyGigE1/0/2
+        tags: f1
+
+      ### TRY AND PUT BRIDGED INTERFACES INTO A ROUTED AGG
+      - name: try and create routed agg
+        comware_portchannel:
+          group: 100
+          members:
+            - FortyGigE1/0/1
+            - FortyGigE1/0/2
+          type: routed
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+        ignore_errors: true
+        tags: f1
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f1
+
+      ### TRY AND PUT MEMBERS INTO A LAGG THAT ARE ALREADY PART OF ANOTHER LAGG
+      - name: created bridged agg 100
+        comware_portchannel:
+          group: 100
+          members:
+            - FortyGigE1/0/1
+            - FortyGigE1/0/2
+          type: bridged
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+        ignore_errors: true
+        tags: f2
+
+      # Ensure fail when interfaces are already part of another LAGG
+
+      - name: created bridged agg 200 using interface already in another agg group
+        comware_portchannel:
+          group: 200
+          members:
+            - FortyGigE1/0/1
+            - FortyGigE1/0/2
+          type: bridged
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+        ignore_errors: true
+        tags: f2
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f2
+
+      # Members must be a List
+
+      - name: try and send a non-list as members
+        comware_portchannel:
+          group: 100
+          members: FortyGigE1/0/1
+          type: routed
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+        ignore_errors: true
+        tags: f3
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f3
+
+      # Members must be sent when state is present
+
+      - name: members param is required when state is present
+        comware_portchannel:
+          group: 100
+          type: routed
+          username: "{{ username }}"
+          password: "{{ password }}"
+          hostname: "{{ inventory_hostname }}"
+          state: present
+        register: data
+        ignore_errors: true
+        tags: f4
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f4

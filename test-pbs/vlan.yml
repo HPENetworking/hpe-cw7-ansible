@@ -1,0 +1,74 @@
+---
+
+  - name: HP Comware vlan automation testing
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      - name: ensure VLAN 10 exists
+        comware_vlan: vlanid=10 name=VLAN10_WEB descr=LOCALSEGMENT state=present username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: TEST 1
+        assert:
+          that:
+            - results.end_state.vlanid == '10'
+            - results.end_state.name == 'VLAN10_WEB'
+            - results.end_state.descr == 'LOCALSEGMENT'
+
+      - name: ensure VLAN 10 exists
+        comware_vlan: vlanid=10 name=VLAN10_WEB descr=LOCALSEGMENT state=present username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: TEST 2 - IDEMPOTENCTY
+        assert:
+          that:
+            - results.changed == false
+
+      - name: ensure VLAN 10 does not exist
+        comware_vlan: vlanid=10 state=absent username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: TEST 3
+        assert:
+          that:
+            - results.changed == true
+            - results.end_state == {}
+
+      - name: re-configure VLAN 10
+        comware_vlan: vlanid=10 name=VLAN10_WEB state=present username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: TEST 4
+        assert:
+          that:
+            - results.end_state.vlanid == '10'
+            - results.end_state.name == 'VLAN10_WEB'
+            - results.end_state.descr == 'VLAN 0010'
+
+      - name: update name and descr
+        comware_vlan: vlanid=10 name=WEB10 descr=WEBDESCR state=present username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: TEST 5
+        assert:
+          that:
+            - results.end_state.vlanid == '10'
+            - results.end_state.name == 'WEB10'
+            - results.end_state.descr == 'WEBDESCR'
+
+      - name: ensure VLAN 10 does not exist
+        comware_vlan: vlanid=10 state=absent username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: results
+
+      - name: TEST 6
+        assert:
+          that:
+            - results.changed == true
+            - results.end_state == {}

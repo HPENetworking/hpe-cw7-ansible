@@ -1,0 +1,149 @@
+---
+
+  - name: HP Comware vrrp automation testing
+    hosts: hp2
+    gather_facts: no
+    connection: local
+
+    vars:
+      username: hp
+      password: hp123
+
+    tasks:
+
+      # PREP FOR VRRP TESTING
+      - name: ensure VLAN 100 exists
+        comware_vlan: vlanid=100 name=VLAN100_VRRP_TEST username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: ensure vlan 100 is up
+        comware_interface: name=vlan100 admin=up username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: ensure VIP is on SVI
+        comware_ipinterface: name=vlan100 addr=100.100.100.2 mask=24 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      # BEGING VRRP TESTING
+      - name: ensure vrid 100 on vlan 100 does not existing before testing
+        comware_vrrp: vrid=100 interface=vlan100 state=absent username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: ensure vrid and vrip are configured
+        comware_vrrp: vrid=100 vip=100.100.100.1 interface=vlan100 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state.vip == '100.100.100.1'
+            - data.end_state.vrid == '100'
+            - data.end_state.preempt == 'yes'
+
+      - name: same config - idempotency check
+        comware_vrrp: vrid=100 vip=100.100.100.1 interface=vlan100 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.changed == false
+
+
+      - name: ensure preempt is no
+        comware_vrrp: vrid=100 vip=100.100.100.1 interface=vlan100 preempt=no username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state.preempt == 'no'
+            - data.end_state.vrid == '100'
+            - data.end_state.vip == '100.100.100.1'
+            - data.end_state.vrid == '100'
+
+      - name: ensure vrid 100 is down
+        comware_vrrp: vrid=100 interface=vlan100 state=shutdown username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state.admin == 'Down'
+            - data.end_state.preempt == 'no'
+            - data.end_state.vrid == '100'
+            - data.end_state.vip == '100.100.100.1'
+            - data.end_state.vrid == '100'
+
+
+      - name: ensure vrid 100 is up
+        comware_vrrp: vrid=100 interface=vlan100 state=undoshutdown username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state.admin == 'Up'
+            - data.end_state.preempt == 'no'
+            - data.end_state.vrid == '100'
+            - data.end_state.vip == '100.100.100.1'
+            - data.end_state.vrid == '100'
+
+
+      - name: simple auth
+        comware_vrrp: vrid=100 interface=vlan100 auth_mode=simple key_type=plain key=testkey username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state.admin == 'Up'
+            - data.end_state.preempt == 'no'
+            - data.end_state.vrid == '100'
+            - data.end_state.vip == '100.100.100.1'
+            - data.end_state.vrid == '100'
+            - data.end_state.auth_mode == 'simple'
+            - data.end_state.key_type == 'cipher'
+
+      - name: md5 auth
+        comware_vrrp: vrid=100 interface=vlan100 auth_mode=md5 key_type=cipher key='$c$3$d+Pc2DO3clxSA2tC6pe3UBzDEDl1dkE+voI=' username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state.admin == 'Up'
+            - data.end_state.preempt == 'no'
+            - data.end_state.vrid == '100'
+            - data.end_state.vip == '100.100.100.1'
+            - data.end_state.vrid == '100'
+            - data.end_state.auth_mode == 'md5'
+            - data.end_state.key_type == 'cipher'
+
+
+      - name: ensure vrid 100 on vlan 100 is removed
+        comware_vrrp: vrid=100 interface=vlan100 state=absent username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+
+      - assert:
+          that:
+            - data.end_state == {}
+            - data.changed == true
+
+
+      # TEST FAIL CASES
+
+      - name: ensure fail since interface vlan45 doesn not exist
+        comware_vrrp: vrid=100 vip=100.100.100.1 interface=vlan45 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: f1
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f1
+
+      - name: ensure fo1/0/8 is a L2 interface
+        comware_interface: name=fo1/0/8 type=bridged username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        tags: f2
+
+      - name: ensure fail since interface is a L2 interface
+        comware_vrrp: vrid=5 vip=5.5.5.5 interface=fo1/0/8 username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        register: data
+        ignore_errors: true
+        tags: f2
+
+      - assert:
+          that:
+            - data.failed == true
+        tags: f2

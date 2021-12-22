@@ -1,0 +1,8 @@
+Value MODE (\w+)
+Value SRC (((\d+.){3}\d+))
+Value DEST (((\d+.){3}\d+))
+
+Start
+  ^interface Tunnel\d+\s+mode\s+${MODE}
+  ^\s+source\s${SRC}
+  ^\s+destination\s${DEST} -> Record

@@ -1,0 +1,26 @@
+---
+
+  - name: Example for Configuration Interfaces
+    hosts: hp1
+    gather_facts: no
+    connection: local
+
+    tasks:
+
+      - name: ensure these interfaces are routed
+        comware_interface: name={{ item }} type=routed username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        with_items:
+          - FortyGigE1/0/1
+          - FortyGigE1/0/2
+          - FortyGigE1/0/3
+          - FortyGigE1/0/4
+
+      - name: ensure the description for 1/0/1 is set
+        comware_interface: name=FortyGigE1/0/1 description='ANSIBLE CONFIGURED THIS' username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+
+      - name: ensure these interfaces are bridged
+        comware_interface: name={{ item }} type=bridged username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+        with_items:
+          - FortyGigE1/0/9
+          - FortyGigE1/0/10
+

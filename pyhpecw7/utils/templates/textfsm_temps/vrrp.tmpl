@@ -1,0 +1,16 @@
+Value VRID (\d+)
+Value PRIORITY (\d+)
+Value PREEMPT (Yes|No)
+Value VIP (((\d+.){3}\d+))
+Value ADMIN (\w+)
+
+
+Start
+  ^\s+Interface -> TABLE
+
+TABLE
+  ^\s+VRID\s+:\s+${VRID}
+  ^\s+Admin Status\s+:\s+${ADMIN}
+  ^\s+Config Pri\s+:\s+${PRIORITY}
+  ^\s+Preempt Mode\s+:\s+${PREEMPT}
+  ^\s+Virtual IP\s+:\s+${VIP} -> Record Start
