@@ -12,7 +12,7 @@ This project contains Ansible modules and Python3 library that can be used to au
 To get started, see the [demo](demo/) for detailed steps.  
   
 # Documentation
-The list of Ansible modules and more detailed summary of each module can be found in [docs](docs/readme.md)
+The [list](docs/README.md) of Ansible modules  and more detailed summary of each module can be found in [docs](docs/)
 
 
 
