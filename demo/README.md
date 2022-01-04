@@ -70,7 +70,7 @@ find / -name ansible
 ```
 
 ### Library installation
-1. Downlaod the library  
+1. Download the library  
 Download the [hpe-cw7-ansible](https://github.com/HPENetworking/hpe-cw7-ansible) library.
 ```
 wget https://github.com/HPENetworking/hpe-cw7-ansible/archive/refs/heads/main.zip
@@ -114,36 +114,50 @@ python3 setup.py install
 ```
 
 ### Switch configuration
+```
+local-user hpe
+password simple hpe
+authorization-attribute user-role network-admin
+service-type ssh
+quit
+netconf ssh server enable
+line vty 0 15
+authentication-mode scheme
+user-role network-admin
+quit
+ssh server enable
+ssh user hpe service-type all authentication-type password
+scp server enable
+```
 
-please help to fill the switch configuration necessary for anbible testing
 
 ### Test connection to switch
 ```
-python3
-from pyhpecw7.comware import HPCOM7
-args = dict(host='hpe1', username='hpe', password='test123456', port=830)
-device = HPCOM7(**args) 
-device.open()
+[root@demo]# python3
+Python 3.7.4 (default, Nov  1 2021, 09:25:01) 
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from pyhpecw7.comware import HPCOM7
+>>> args = dict(host='hpe', username='hpe', password='hpe', port=830)
+>>> device = HPCOM7(**args)
+>>> device.open()
+<ncclient.manager.Manager object at 0x7f9822762f50>
+>>> device.connected
+True
 ```
-
-Please help to send me the logs
 
 ### Ansible configuration
 1. etc/host file
 
-please help to fill the content
+to be added
 
 2. ansible.conf file
 
-please help to fill the content
+to be added
 
 ### Playbook execution
 
-please help to send me the logs for the 3 playbooks
-
-hp-interfaces.yml
-hp-portchannel.yml
-hp-vlans.yml
+to be added
 
 
 
