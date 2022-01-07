@@ -4,3 +4,8 @@ password=hpe
 ansible_python_interpreter=/usr/bin/python3
 [switches]
 hpe1
+hpe2
+hpe3
+
+
+

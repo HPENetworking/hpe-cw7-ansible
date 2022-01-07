@@ -1,7 +1,7 @@
 ---
 
   - name: Example for Configuration of Portchannels
-    hosts: hp1
+    hosts: hpe2
     gather_facts: no
     connection: local
 
@@ -10,18 +10,18 @@
       - name: ensure these interfaces are bridged
         comware_interface: name={{ item }} type=bridged username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
         with_items:
-          - FortyGigE1/0/1
-          - FortyGigE1/0/2
-          - FortyGigE1/0/3
-          - FortyGigE1/0/4
+          - Ten-GigabitEthernet1/0/3
+          - Ten-GigabitEthernet1/0/4
+          - Ten-GigabitEthernet1/0/5
+          - Ten-GigabitEthernet1/0/6
 
       - comware_portchannel:
           group: 100
           members:
-            - FortyGigE1/0/1
-            - FortyGigE1/0/2
-            - FortyGigE1/0/3
-            - FortyGigE1/0/4
+            - Ten-GigabitEthernet1/0/3
+            - Ten-GigabitEthernet1/0/4
+            - Ten-GigabitEthernet1/0/5
+            - Ten-GigabitEthernet1/0/6
           type: bridged
           mode: dynamic
           lacp_mode: active

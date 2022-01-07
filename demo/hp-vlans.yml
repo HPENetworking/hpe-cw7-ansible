@@ -1,7 +1,7 @@
 ---
 
   - name: VLAN Automation with Ansible on HP Com7 Devices
-    hosts: hp1
+    hosts: hpe1 hpe2
     gather_facts: no
     connection: local
 
