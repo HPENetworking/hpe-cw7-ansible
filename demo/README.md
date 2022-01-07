@@ -217,7 +217,7 @@ Run the ansible-playbook command to test the scripts, i.e.
 ansible-playbook -i hosts hp-vlans.yml 
 ```
 **Note:** 
-* Error - ansible-playbook: command not found
+* Error - ansible-playbook: command not found  
 The command below can help to find the correct path. Run the command in the directory or create a soft link to the file. 
 ```
 find / -name ansible-playbook
@@ -249,7 +249,7 @@ hpe2                       : ok=3    changed=3    unreachable=0    failed=0    s
 ```
 
 ## Demo log
-The log of the demo can be found in the file [demo-log](demo/demo-log).  
+The log of the demo can be found in the file [demo-log](demo-log).  
 
 
 
