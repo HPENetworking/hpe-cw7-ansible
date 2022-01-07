@@ -218,7 +218,7 @@ ansible-playbook -i hosts hp-vlans.yml
 ```
 **Note:** 
 * Error - ansible-playbook: command not found  
-The command below can help to find the correct path. Run the command in the directory or create a soft link to the file. 
+The command below can help to find the correct path. After the path is located, run the command in the directory or create a soft link to the file. 
 ```
 find / -name ansible-playbook
 ```
