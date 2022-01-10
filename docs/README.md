@@ -1,45 +1,85 @@
-# HPE COMWARE 7 Ansible Modules
+# HPE Networking Comware 7 Ansible Docs
+### *Network Automation with HPE and Ansible*
 
-The list of Ansible modules that has been developed can be broken down into two types of modules: read-only modules and read-write modules.  The read-write modules, or those that can implement a change on the system, can further be broken down into feature-level and system-level modules.
+---
+### Requirements
+* Comware 7 and NETCONF support
+* Python 3.7.4+
+* Ansible 2.10.4+
 
-The list of modules can be seen below.
+---
+### Modules
 
-## Read-Only Modules
-
-The following modules gather data from the switches.  They do **NOT** impact system or feature level configuration.
-
-* comware_facts - gather device facts (characteristics) such as hostname, operating system (OS), serial number, uptime, localtime, list of interfaces, and hardware platform
-* comware_neighbors - gather neighbor information
-* comware_ping - test remote reachability to specific destinations from the switch
-
-## Read-Write Modules
-
-### System Modules
-
-Several modules can be used to modify system level change on the HP Com7 devices.  They are listed here:
-
-* comware_file_copy - copy file from local Ansible machine to remote switch
-* comware_install_config - copy a valid config file for the desired switch model from local Ansible machine to remote switch and activates it to be the running configuration
-* comware_install_os - copy OS (bin or ipe files) from local Ansible machine to switch, set image to load on next boot, and reboots switch
-* comware_reboot - reboots switch
-* comware_save - saves current config
-* comware_clean_erase - factory defaults the switch (**BE CAREFUL!**)
-
-### Feature Modules
-
-Several modules can be used to modify feature level configuration on the HPE COMWARE 7 devices.  They are listed here:
-
-* comware_command - send raw CLI command(s) to the device
-* comware_interface - manage physical interface characteristics
-* comware_ipinterface - manage Layer 3 interface attributes
-* comware_switchport - manage Layer 2 interface attributes
-* comware_vlan - manage VLAN attributes
-* comware_portchannel - manage portchannels (LAGGs) and members
-* comware_irf_members - manages IRF membership creation
-* comware_irf_ports - manages IRF port creation and removal
-* comware_vrrp - manage VRRP vrid (group) configuration
-* comware_vrrp_global - manage VRRP global load-balancing method
-* comware_l2vpn_global - enable/disable L2VPN globally
-* comware_vxlan - manages the VXLAN to VSI mapping and associated tunnels
-* comware_vxlan_tunnel - manages VXLAN tunnel interfaces (pre-req to comware_vxlan)
-* comware_vxlan_svc_instance - manages interface level service instance and maps appropriate VSI, i.e. (xconnect)
+  * [comware_ping - ping remote destinations *from* the comware 7 switch](comware_ping)
+  * [comware_vrrp - manages vrrp configurations on a comware v7 device](comware_vrrp)
+  * [comware_file_copy - copy local file to remote comware v7 device](comware_file_copy)
+  * [comware_install_os - copy (if necessary) and install a new operating system on comware v7 device](comware_install_os)
+  * [comware_irf_ports - manages irf port creation and removal for comware v7 devices](comware_irf_ports)
+  * [comware_vxlan - manages vxlan to vsi mappings and tunnel mappings to vxlan](comware_vxlan)
+  * [comware_vlan - manage vlan attributes for comware 7 devices](comware_vlan)
+  * [comware_reboot - perform a reboot of a comware 7 device](comware_reboot)
+  * [comware_irf_members - manages irf membership configuration](comware_irf_members)
+  * [comware_l2vpn_global - manage global config state for l2vpn](comware_l2vpn_global)
+  * [comware_neighbors - retrieves active lldp neighbors (read-only)](comware_neighbors)
+  * [comware_ipinterface - manages ipv4/ipv6 addresses on interfaces](comware_ipinterface)
+  * [comware_switchport - manages layer 2 parameters on switchport interfaces](comware_switchport)
+  * [comware_install_config - activate a new current-running config in realtime](comware_install_config)
+  * [comware_vxlan_tunnel - manages vxlan tunnels on comware 7 devices](comware_vxlan_tunnel)
+  * [comware_command - execute cli commands on comware 7 devices](comware_command)
+  * [comware_interface - manages physical interface attributes](comware_interface)
+  * [comware_facts - gathers facts of comware 7 devices](comware_facts)
+  * [comware_save - save the running configuration](comware_save)
+  * [comware_portchannel - manages port-channel (lag) on comware 7 devices](comware_portchannel)
+  * [comware_vrrp_global - manages vrrp global configuration mode](comware_vrrp_global)
+  * [comware_vxlan_vsi - manages mapping of an ethernet service to a vsi (vxlan id)](comware_vxlan_vsi)
+  * [comware_clean_erase - factory default hp comware 7 device](comware_clean_erase)
+  * [comware_aaa - Manage AAA](comware_aaa)
+  * [comware_acl - Configure the acl issue to be applied to the interface](comware_acl)
+  * [comware_bfd - Manage bfd config](comware_bfd)
+  * [comware_bgp_af - Manage address family configs](comware_bgp_af)
+  * [comware_bgp_global - config bgp configs in the bgp instance view such as routerid](comware_bgp_global)
+  * [comware_bgp_group - create and config bgp group](comware_bgp_group)
+  * [comware_compare - Enter the configuration command and compare it with the expected result](comware_compare)
+  * [comware_config - Back uo current configuration to the specified file](comware_config)
+  * [comware_dldp - Manage dldp authentication,interface,timeout and mode  on Comware 7 devices](comware_dldp)
+  * [comware_evpn - Configure the EVPN issue to be applied to the device](comware_evpn)
+  * [comware_ftp - Configure device FTP function](comware_ftp)
+  * [comware_hwtacacs - Manage hwtacacs scheme](comware_hwtacacs)
+  * [comware_iface_stp - Manage stp config in interface](comware_iface_stp)
+  * [comware_igmp - Configure the igmp issue to be applied to the interface](comware_igmp)
+  * [comware_intfState - Check the port status. If there are undo shutdown ports but the field ports are down, list these inconsistent ports. If not, return OK](comware_intfState)
+  * [comware_isis_global - Manage isis for Comware 7 devices](comware_isis_global)
+  * [comware_isis_interface -  Manage isis for Comware 7 devices](comware_isis_interface)
+  * [comware_lacp - Manage lacp system priority, system mac on Comware 7 devices](comware_lacp)
+  * [comware_license - loading device license](comware_license)
+  * [comware_lldp - Manage lacp fast-Interval, tx-interval,hold-multplier on Comware 7 devices](comware_lldp)
+  * [comware_lldp_global - Manage global config state for LLDP.this funtion can be take effect only global and interface LLDP all open. The interface LLDP is open default](comware_lldp_global)
+  * [comware_lldp_interface - Manage lldp enable on interfaces.The default state is enable](comware_lldp_interface)
+  * [comware_local_user - Manage local_user](comware_local_user)
+  * [comware_log - get the device diagnostic information and upload to file server](comware_log)
+  * [comware_log_source - Manage output rules for log information on V7 devices](comware_log_source)
+  * [comware_loghost - Manage info-center log host and related parameters on V7 devices](comware_loghost)
+  * [comware_mtu - Manage mtu and jumboframe of the interface](comware_mtu)
+  * [comware_netconf - Manage netconf log and xml function on Comware 7 devices.XML cfg not support enter xml view now,This is not normally done](comware_netconf)
+  * [comware_netstream - Manage ip netstream,rate,timeout, max_entry,vxlan udp-port,and interface enable and ip netstream aggregation destination-prefix enable, netstream statistics output message destination address and destination UDP port number configurationon  Comware 7 devices](comware_netstream)
+  * [comware_ntp - Configure the ntp issue to be applied to the device](comware_ntp)
+  * [comware_ospf - Manage ospf](comware_ospf)
+  * [comware_ospf_intf - Manage ospf in interface](comware_ospf_intf)
+  * [comware_patch - Rollback the running configuration](comware_patch)
+  * [comware_radius - create radius scheme](comware_radius)
+  * [comware_rollback - Rollback the running configuration](comware_rollback)
+  * [comware_sflow - Manage sflow attributes for Comware 7 devices](comware_sflow)
+  * [comware_sflow_intf - Manage sflow interface flow collector and sampling_rate on Comware 7 devices](comware_sflow_intf)
+  * [comware_snmp_community - Manages SNMP community configuration on H3C switches](comware_snmp_community)
+  * [comware_snmp_group - Manages SNMP group configuration on H3C switches.](comware_snmp_group)
+  * [comware_snmp_target_host - Manages SNMP user configuration on H3c switches](comware_snmp_target_host)
+  * [comware_snmp_user - Manages SNMP user configuration on H3c switches](comware_snmp_user)
+  * [comware_startup - config the next restart file or ipe .   patch function not available,please use patch module](comware_startup)
+  * [comware_stp - Manage stp global BPDU enable, working mode and tc-bpdu attack protection function](comware_stp)
+  * [comware_syslog_global - Manage system log timestamps and  terminal logging level on Comware 7 devices](comware_syslog_global)
+  * [comware_tele_stream - Manage telemetry global enable(disable) and telemetry stream timestamp enable(disable) and device-id on Comware 7 devices.Before config device-id,the timestamp must be enable](comware_tele_stream)
+  * [comware_teleFlowGroup_global - Manage telemetry flow group agingtime on Comware 7 devices.The default value is Varies by device](comware_teleFlowGroup_global)
+  * [comware_TelemetryFlowTrace - Manage Package information of the message sent to the collector on V7 devices](comware_TelemetryFlowTrace)
+  * [comware_vpn_instance - config instance rely ensure some instance configs can be set](comware_vpn_instance)
+  * [comware_vsi - Configure some command functions of vsi view](comware_vsi)
+  * [comware_vsi_intf - Configure some functions of vsi-interface](comware_vsi_intf)

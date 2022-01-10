@@ -1,11 +1,11 @@
-# HP Networking Comware 7 Ansible Docs
-### *Network Automation with HPN and Ansible*
+# HPE Networking Comware 7 Ansible Docs
+### *Network Automation with HPE and Ansible*
 
 ---
 ### Requirements
 * Comware 7 and NETCONF support
-* Testing performed on HP 5930s
-* pyhpecw7
+* Python 3.7.4+
+* Ansible 2.10.4+
 
 ---
 ### Modules
