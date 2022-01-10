@@ -2,7 +2,7 @@
 
 
 comware_neighbors
-+++++++++++++++++
+++++++++++++++++++++++++++++
 
 .. contents::
    :local:
@@ -28,48 +28,49 @@ Options
     <th class="head">default</th>
     <th class="head">choices</th>
     <th class="head">comments</th>
+    </tr><tr style="text-align:center">
+        <td style="vertical-align:middle">neigh_type</td>
+        <td style="vertical-align:middle">no</td>
+        <td style="vertical-align:middle">lldp</td>
+        <td style="vertical-align:middle;text-align:left"><ul style="margin:0;"><li>lldp</li><li>cdp</li></td></td>
+        <td style="vertical-align:middle;text-align:left">type of neighbors</td>
     </tr>
-            <tr style="text-align:center">
-    <td style="vertical-align:middle">hostname</td>
-    <td style="vertical-align:middle">yes</td>
-    <td style="vertical-align:middle"></td>
-        <td style="vertical-align:middle;text-align:left"><ul style="margin:0;"></ul></td>
-        <td style="vertical-align:middle;text-align:left">
-      IP Address or hostname of the Comware v7 device that has NETCONF enabled<br>    </td>
+    <tr style="text-align:center">
+        <td style="vertical-align:middle">port</td>
+        <td style="vertical-align:middle">no</td>
+        <td style="vertical-align:middle">830</td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle;text-align:left">NETCONF port number</td>
     </tr>
-            <tr style="text-align:center">
-    <td style="vertical-align:middle">neigh_type</td>
-    <td style="vertical-align:middle">no</td>
-    <td style="vertical-align:middle">lldp</td>
-        <td style="vertical-align:middle;text-align:left"><ul style="margin:0;"><li>lldp</li><li>cdp</li></ul></td>
-        <td style="vertical-align:middle;text-align:left">
-      type of neighbors<br>    </td>
+    <tr style="text-align:center">
+        <td style="vertical-align:middle">hostname</td>
+        <td style="vertical-align:middle">yes</td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle;text-align:left">IP Address or hostname of the Comware v7 device that has              NETCONF enabled</td>
     </tr>
-            <tr style="text-align:center">
-    <td style="vertical-align:middle">password</td>
-    <td style="vertical-align:middle">yes</td>
-    <td style="vertical-align:middle"></td>
-        <td style="vertical-align:middle;text-align:left"><ul style="margin:0;"></ul></td>
-        <td style="vertical-align:middle;text-align:left">
-      Password used to login to the switch<br>    </td>
+    <tr style="text-align:center">
+        <td style="vertical-align:middle">username</td>
+        <td style="vertical-align:middle">yes</td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle;text-align:left">Username used to login to the switch</td>
     </tr>
-            <tr style="text-align:center">
-    <td style="vertical-align:middle">port</td>
-    <td style="vertical-align:middle">no</td>
-    <td style="vertical-align:middle">830</td>
-        <td style="vertical-align:middle;text-align:left"><ul style="margin:0;"></ul></td>
-        <td style="vertical-align:middle;text-align:left">
-      NETCONF port number<br>    </td>
+    <tr style="text-align:center">
+        <td style="vertical-align:middle">password</td>
+        <td style="vertical-align:middle">yes</td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle;text-align:left">Password used to login to the switch</td>
     </tr>
-            <tr style="text-align:center">
-    <td style="vertical-align:middle">username</td>
-    <td style="vertical-align:middle">yes</td>
-    <td style="vertical-align:middle"></td>
-        <td style="vertical-align:middle;text-align:left"><ul style="margin:0;"></ul></td>
-        <td style="vertical-align:middle;text-align:left">
-      Username used to login to the switch<br>    </td>
+    <tr style="text-align:center">
+        <td style="vertical-align:middle">look_for_keys</td>
+        <td style="vertical-align:middle">no</td>
+        <td style="vertical-align:middle">False</td>
+        <td style="vertical-align:middle"></td>
+        <td style="vertical-align:middle;text-align:left">Whether searching for discoverable private key files in ~/.ssh/</td>
     </tr>
-        </table><br>
+    </table><br>
 
 
 Examples
@@ -83,8 +84,11 @@ Examples
 ::
 
     
+        
     # get lldp neighbors
     - comware_neighbors: username={{ username }} password={{ password }} hostname={{ inventory_hostname }}
+    
+
     
 
 
