@@ -8,7 +8,7 @@
 * Ansible 2.10.4+
 
 ---
-### Modules
+### [Modules](module_docs.md)
 
   * [comware_ping - ping remote destinations *from* the comware 7 switch](comware_ping_module.rst)
   * [comware_vrrp - manages vrrp configurations on a comware v7 device](comware_vrrp_module.rst)
