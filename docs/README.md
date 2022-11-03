@@ -40,7 +40,7 @@
   * [comware_bgp_global - config bgp configs in the bgp instance view such as routerid](comware_bgp_global_module.rst)
   * [comware_bgp_group - create and config bgp group](comware_bgp_group_module.rst)
   * [comware_compare - Enter the configuration command and compare it with the expected result](comware_compare_module.rst)
-  * [comware_config - Back uo current configuration to the specified file](comware_config_module.rst)
+  * [comware_config - Back up current configuration to the specified file](comware_config_module.rst)
   * [comware_dldp - Manage dldp authentication,interface,timeout and mode  on Comware 7 devices](comware_dldp_module.rst)
   * [comware_evpn - Configure the EVPN issue to be applied to the device](comware_evpn_module.rst)
   * [comware_ftp - Configure device FTP function](comware_ftp_module.rst)
