@@ -31,7 +31,7 @@ setup(
 
   package_data={'pyhpecw7': ['utils/templates/textfsm_temps/*.tmpl']},
   install_requires=[
-      'textfsm==1.1.0',
+      'textfsm==1.1.3',
       'lxml',
       'ncclient',
       'scp',
